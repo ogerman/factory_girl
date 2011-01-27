@@ -73,8 +73,9 @@ module FactoryGirl
     # are equivilent.
     def method_missing(name, *args, &block)
       if args.empty? && block.nil?
-        if sequence = FactoryGirl.sequences[name]
-          add_attribute(name) { sequence.next }
+        item = FactoryGirl.find(name)
+        if Sequence === item
+          add_attribute(name) { item.next }
         else
           association(name)
         end
@@ -100,7 +101,7 @@ module FactoryGirl
     #
     # Except that no globally available sequence will be defined.
     def sequence(name, start_value = 1, &block)
-      sequence = Sequence.new(start_value, &block)
+      sequence = Sequence.new(name, start_value, &block)
       add_attribute(name) { sequence.next }
     end
 

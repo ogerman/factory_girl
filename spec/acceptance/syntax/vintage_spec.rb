@@ -37,8 +37,8 @@ describe "vintage syntax" do
   end
 
   it "should raise Factory::SequenceAbuseError" do
-    Factory.define :sequence_abuser, :class => Object do |factory|
-      factory.first_name { Factory.sequence(:email) }
+    Factory.define :sequence_abuser, :class => User do |factory|
+      factory.first_name { Factory.sequence(:name) }
     end
 
     lambda {
@@ -152,33 +152,33 @@ end
 
 describe "defining a sequence" do
   before do
-    @sequence = "sequence"
     @name     = :count
+    @sequence = FactoryGirl::Sequence.new(@name) {}
     stub(FactoryGirl::Sequence).new { @sequence }
   end
 
   it "should create a new sequence" do
-    mock(FactoryGirl::Sequence).new(1) { @sequence }
+    mock(FactoryGirl::Sequence).new(@name, 1) { @sequence }
     Factory.sequence(@name)
   end
 
   it "should use the supplied block as the sequence generator" do
-    stub(FactoryGirl::Sequence).new.yields(1)
+    stub(FactoryGirl::Sequence).new { @sequence }.yields(1)
     yielded = false
     Factory.sequence(@name) {|n| yielded = true }
     (yielded).should be
   end
 
   it "should use the supplied start_value as the sequence start_value" do
-    mock(FactoryGirl::Sequence).new("A") { @sequence }
+    mock(FactoryGirl::Sequence).new(@name, "A") { @sequence }
     Factory.sequence(@name, "A")
   end
 end
 
 describe "after defining a sequence" do
   before do
-    @sequence = "sequence"
     @name     = :test
+    @sequence = FactoryGirl::Sequence.new(@name) {}
     @value    = '1 2 5'
 
     stub(@sequence).next { @value }

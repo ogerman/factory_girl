@@ -21,7 +21,7 @@ module FactoryGirl
         end
 
         def sequence(name, start_value = 1, &block)
-          FactoryGirl.sequences[name] = Sequence.new(start_value, &block)
+          FactoryGirl.add(Sequence.new(name, start_value, &block))
         end
       end
     end

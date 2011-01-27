@@ -7,7 +7,10 @@ module FactoryGirl
   # using next.
   class Sequence
 
-    def initialize(value = 1, &proc) #:nodoc:
+    attr_reader :name
+
+    def initialize(name, value = 1, &proc) #:nodoc:
+      @name = name
       @proc  = proc
       @value = value || 1
     end
@@ -19,10 +22,22 @@ module FactoryGirl
       @value = @value.next
     end
 
+    # Sequences currently don't support aliases
+    def aliases
+      []
+    end
+
   end
 
   class << self
-    attr_accessor :sequences #:nodoc:
+    attr_writer :sequences
   end
+
+  def self.sequences
+    puts "WARNING: FactoryGirl.sequences is deprecated."
+    puts "Use FactoryGirl.registry instead."
+    @sequences
+  end
+
   self.sequences = {}
 end

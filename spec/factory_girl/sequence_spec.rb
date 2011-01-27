@@ -3,11 +3,20 @@ require 'spec_helper'
 describe FactoryGirl::Sequence do
   describe "a basic sequence" do
     before do
-      @sequence = FactoryGirl::Sequence.new {|n| "=#{n}" }
+      @name = :test
+      @sequence = FactoryGirl::Sequence.new(@name) {|n| "=#{n}" }
+    end
+
+    it "has a name" do
+      @sequence.name.should == @name
     end
 
     it "should start with a value of 1" do
       @sequence.next.should == "=1"
+    end
+
+    it "doesn't have aliases" do
+      @sequence.aliases.should == []
     end
 
     describe "after being called" do
@@ -23,7 +32,7 @@ describe FactoryGirl::Sequence do
   
   describe "a custom sequence" do
     before do
-      @sequence = FactoryGirl::Sequence.new("A") {|n| "=#{n}" }
+      @sequence = FactoryGirl::Sequence.new(:name, "A") {|n| "=#{n}" }
     end
 
     it "should start with a value of A" do

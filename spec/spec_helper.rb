@@ -23,7 +23,7 @@ RSpec.configure do |config|
   RSpec::Core::ExampleGroup.send(:include, RR::Adapters::Rspec)
   config.after do
     FactoryGirl.factories.clear
-    FactoryGirl.sequences.clear
+    FactoryGirl.registry = FactoryGirl::Registry.new
   end
 end
 

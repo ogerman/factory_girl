@@ -133,7 +133,7 @@ module FactoryGirl
         #
         #   Factory.sequence(:email) {|n| "somebody_#{n}@example.com" }
         def self.sequence(name, start_value = 1, &block)
-          FactoryGirl.sequences[name] = Sequence.new(start_value, &block)
+          FactoryGirl.add(Sequence.new(name, start_value, &block))
         end
 
         # Generates and returns the next value in a sequence.
@@ -144,12 +144,8 @@ module FactoryGirl
         #
         # Returns:
         #   The next value in the sequence. (Object)
-        def self.next(sequence)
-          unless FactoryGirl.sequences.key?(sequence)
-            raise "No such sequence: #{sequence}"
-          end
-
-          FactoryGirl.sequences[sequence].next
+        def self.next(name)
+          FactoryGirl.find(name).next
         end
 
         # Defines a new alias for attributes.

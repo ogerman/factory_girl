@@ -39,12 +39,12 @@ describe FactoryGirl::DefinitionProxy do
 
   describe "adding an attribute using a in-line sequence" do
     it "should create the sequence" do
-      mock(FactoryGirl::Sequence).new(1)
+      mock(FactoryGirl::Sequence).new(:name, 1)
       subject.sequence(:name) {}
     end
 
     it "should create the sequence with a custom default value" do
-      mock(FactoryGirl::Sequence).new("A")
+      mock(FactoryGirl::Sequence).new(:name, "A")
       subject.sequence(:name, "A") {}
     end
 
@@ -123,7 +123,7 @@ describe FactoryGirl::DefinitionProxy do
   it "adds a sequence when passed an undefined method without arguments or a block" do
     name = :airport
     proxy = 'proxy'
-    FactoryGirl.sequences[name] = FactoryGirl::Sequence.new { |value| "expected" }
+    FactoryGirl.add(FactoryGirl::Sequence.new(name) { |value| "expected" })
     subject.send(name)
     stub(proxy).set
     factory.attributes.last.add_to(proxy)
