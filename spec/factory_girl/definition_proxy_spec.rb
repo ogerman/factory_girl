@@ -113,6 +113,7 @@ describe FactoryGirl::DefinitionProxy do
 
   it "adds an association when passed an undefined method without arguments or a block" do
     name = :user
+    FactoryGirl.register(FactoryGirl::Factory.new(name))
     attr = 'attribute'
     stub(attr).name { name }
     mock(FactoryGirl::Attribute::Association).new(name, name, {}) { attr }
@@ -123,7 +124,7 @@ describe FactoryGirl::DefinitionProxy do
   it "adds a sequence when passed an undefined method without arguments or a block" do
     name = :airport
     proxy = 'proxy'
-    FactoryGirl.add(FactoryGirl::Sequence.new(name) { |value| "expected" })
+    FactoryGirl.register(FactoryGirl::Sequence.new(name) { |value| "expected" })
     subject.send(name)
     stub(proxy).set
     factory.attributes.last.add_to(proxy)

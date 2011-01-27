@@ -28,9 +28,9 @@ module FactoryGirl
           proxy = FactoryGirl::DefinitionProxy.new(factory)
           yield(proxy)
           if parent = options.delete(:parent)
-            factory.inherit_from(FactoryGirl.factory_by_name(parent))
+            factory.inherit_from(FactoryGirl.find(parent))
           end
-          FactoryGirl.register_factory(factory)
+          FactoryGirl.register(factory)
         end
 
         # Generates and returns a Hash of attributes from this factory. Attributes
@@ -47,7 +47,7 @@ module FactoryGirl
         # A set of attributes that can be used to build an instance of the class
         # this factory generates.
         def self.attributes_for(name, overrides = {})
-          FactoryGirl.factory_by_name(name).run(Proxy::AttributesFor, overrides)
+          FactoryGirl.find(name).run(Proxy::AttributesFor, overrides)
         end
 
         # Generates and returns an instance from this factory. Attributes can be
@@ -63,7 +63,7 @@ module FactoryGirl
         # An instance of the class this factory generates, with generated attributes
         # assigned.
         def self.build(name, overrides = {})
-          FactoryGirl.factory_by_name(name).run(Proxy::Build, overrides)
+          FactoryGirl.find(name).run(Proxy::Build, overrides)
         end
 
         # Generates, saves, and returns an instance from this factory. Attributes can
@@ -83,7 +83,7 @@ module FactoryGirl
         # A saved instance of the class this factory generates, with generated
         # attributes assigned.
         def self.create(name, overrides = {})
-          FactoryGirl.factory_by_name(name).run(Proxy::Create, overrides)
+          FactoryGirl.find(name).run(Proxy::Create, overrides)
         end
 
         # Generates and returns an object with all attributes from this factory
@@ -99,7 +99,7 @@ module FactoryGirl
         # Returns: +Object+
         # An object with generated attributes stubbed out.
         def self.stub(name, overrides = {})
-          FactoryGirl.factory_by_name(name).run(Proxy::Stub, overrides)
+          FactoryGirl.find(name).run(Proxy::Stub, overrides)
         end
 
         # Executes the default strategy for the given factory. This is usually create,
@@ -114,7 +114,7 @@ module FactoryGirl
         # Returns: +Object+
         # The result of the default strategy.
         def self.default_strategy(name, overrides = {})
-          self.send(FactoryGirl.factory_by_name(name).default_strategy, name, overrides)
+          self.send(FactoryGirl.find(name).default_strategy, name, overrides)
         end
 
         # Defines a new sequence that can be used to generate unique values in a specific format.
@@ -133,7 +133,7 @@ module FactoryGirl
         #
         #   Factory.sequence(:email) {|n| "somebody_#{n}@example.com" }
         def self.sequence(name, start_value = 1, &block)
-          FactoryGirl.add(Sequence.new(name, start_value, &block))
+          FactoryGirl.register(Sequence.new(name, start_value, &block))
         end
 
         # Generates and returns the next value in a sequence.

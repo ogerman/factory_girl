@@ -29,15 +29,9 @@ module FactoryGirl
 
   end
 
-  class << self
-    attr_writer :sequences
-  end
-
   def self.sequences
     puts "WARNING: FactoryGirl.sequences is deprecated."
     puts "Use FactoryGirl.registry instead."
-    @sequences
+    registry
   end
-
-  self.sequences = {}
 end

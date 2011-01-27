@@ -10,6 +10,10 @@ describe FactoryGirl::Registry do
     subject.find(factory.name).should == factory
   end
 
+  it "raises when finding an unregistered factory" do
+    expect { subject.find(:bogus) }.to raise_error(ArgumentError)
+  end
+
   it "adds and returns a factory" do
     subject.add(factory).should == factory
   end
@@ -69,12 +73,12 @@ describe FactoryGirl::Registry do
 
   context "on the FactoryGirl module" do
     it "finds a registered a factory" do
-      FactoryGirl.add(factory)
+      FactoryGirl.register(factory)
       FactoryGirl.find(factory.name).should == factory
     end
 
     it "knows that a factory is registered by symbol" do
-      FactoryGirl.add(factory)
+      FactoryGirl.register(factory)
       FactoryGirl.should be_registered(factory.name.to_sym)
     end
 

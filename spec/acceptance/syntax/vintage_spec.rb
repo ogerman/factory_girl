@@ -51,7 +51,7 @@ describe Factory, "given a parent factory" do
   before do
     @parent = FactoryGirl::Factory.new(:object)
     @parent.define_attribute(FactoryGirl::Attribute::Static.new(:name, 'value'))
-    FactoryGirl.register_factory(@parent)
+    FactoryGirl.register(@parent)
   end
 
   it "should raise an ArgumentError when trying to use a non-existent factory as parent" do
@@ -88,21 +88,16 @@ describe "defining a factory" do
 
   it "should add the factory to the list of factories" do
     Factory.define(@name) {|f| }
-    @factory.should == FactoryGirl.factories[@name]
-  end
-
-  it "should allow a factory to be found by name" do
-    Factory.define(@name) {|f| }
-    FactoryGirl.factory_by_name(@name).should == @factory
+    @factory.should == FactoryGirl.find(@name)
   end
 end
 
 describe "after defining a factory" do
   before do
     @name    = :user
-    @factory = "factory"
+    @factory = FactoryGirl::Factory.new(@name)
 
-    FactoryGirl.factories[@name] = @factory
+    FactoryGirl.register(@factory)
   end
 
   it "should use Proxy::AttributesFor for Factory.attributes_for" do

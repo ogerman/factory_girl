@@ -13,7 +13,7 @@ module FactoryGirl
     end
 
     def find(name)
-      @items[name.to_sym]
+      @items[name.to_sym] or raise ArgumentError.new("Not registered: #{name.to_s}")
     end
 
     def each(&block)
@@ -39,7 +39,7 @@ module FactoryGirl
     end
   end
 
-  def self.add(item)
+  def self.register(item)
     registry.add(item)
   end
 

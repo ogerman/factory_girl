@@ -27,7 +27,7 @@ module FactoryGirl
         def self.method_missing(name, *args, &block)
           if block_given?
             start_value = args.first
-            FactoryGirl.add(Sequence.new(name, start_value || 1, &block))
+            FactoryGirl.register(Sequence.new(name, start_value || 1, &block))
           else
             FactoryGirl.find(name).next
           end

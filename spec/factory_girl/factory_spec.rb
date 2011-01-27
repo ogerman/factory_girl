@@ -1,33 +1,5 @@
 require 'spec_helper'
 
-describe FactoryGirl::Factory, "registering a factory" do
-  before do
-    @name    = :user
-    @factory = "factory"
-    @aliases = [:one, :two]
-    stub(@factory).name { @name }
-    stub(@factory).aliases { @aliases }
-  end
-
-  it "should add the factory to the list of factories" do
-    FactoryGirl.register_factory(@factory)
-    FactoryGirl.factory_by_name(@name).should == @factory
-  end
-
-  it "should not allow a duplicate factory definition" do
-    lambda {
-      2.times { FactoryGirl.register_factory(@factory) }
-    }.should raise_error(FactoryGirl::DuplicateDefinitionError)
-  end
-
-  it "registers aliases" do
-    FactoryGirl.register_factory(@factory)
-    @aliases.each do |name|
-      FactoryGirl.factory_by_name(name).should == @factory
-    end
-  end
-end
-
 describe FactoryGirl::Factory do
   include DefinesConstants
 
@@ -310,32 +282,6 @@ describe FactoryGirl::Factory, "with a string for a name" do
 
   it "should convert the string to a symbol" do
     @factory.name.should == @name
-  end
-end
-
-describe FactoryGirl::Factory, "registered with a string name" do
-  before do
-    @name    = :string
-    @factory = FactoryGirl::Factory.new(@name)
-    FactoryGirl.register_factory(@factory)
-  end
-
-  it "should store the factory using a symbol" do
-    FactoryGirl.factories[@name].should == @factory
-  end
-end
-
-describe FactoryGirl::Factory, "registered with a custom name" do
-  before do
-    @actual_name = :string
-    @custom_name = :words
-    @factory = FactoryGirl::Factory.new(@actual_name)
-
-    FactoryGirl.register_factory(@factory, :as => @custom_name)
-  end
-
-  it "finds the factory using the custom name" do
-    FactoryGirl.factory_by_name(@custom_name).should == @factory
   end
 end
 
