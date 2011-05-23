@@ -24,6 +24,7 @@ module FactoryGirl
   end
 
   class Factory
+
     attr_reader :name #:nodoc:
     attr_reader :attributes #:nodoc:
 
@@ -42,6 +43,10 @@ module FactoryGirl
 
     def default_strategy #:nodoc:
       @options[:default_strategy] || :create
+    end
+
+    def uniq_record?
+      @options[:uniq_record] || false
     end
 
     def initialize(name, options = {}) #:nodoc:
@@ -84,16 +89,21 @@ module FactoryGirl
     end
 
     def run(proxy_class, overrides) #:nodoc:
-      proxy = proxy_class.new(build_class)
-      overrides = symbolize_keys(overrides)
-      overrides.each {|attr, val| proxy.set(attr, val) }
-      passed_keys = overrides.keys.collect {|k| FactoryGirl.aliases_for(k) }.flatten
-      @attributes.each do |attribute|
-        unless passed_keys.include?(attribute.name)
-          attribute.add_to(proxy)
+      if uniq_record? && FactoryGirl.has_uniq_instance?(@name)
+        FactoryGirl.uniq_instance(@name)
+      else
+        proxy = proxy_class.new(build_class)
+        overrides = symbolize_keys(overrides)
+        overrides.each {|attr, val| proxy.set(attr, val) }
+        passed_keys = overrides.keys.collect {|k| FactoryGirl.aliases_for(k) }.flatten
+        @attributes.each do |attribute|
+          unless passed_keys.include?(attribute.name)
+            attribute.add_to(proxy)
+          end
         end
+        ret = proxy.result(@to_create_block)
+        uniq_record? ? FactoryGirl.add_uniq_instance(@name, ret) : ret
       end
-      proxy.result(@to_create_block)
     end
 
     def human_name(*args, &block)
@@ -163,7 +173,7 @@ module FactoryGirl
     end
 
     def assert_valid_options(options)
-      invalid_keys = options.keys - [:class, :parent, :default_strategy, :aliases]
+      invalid_keys = options.keys - [:class, :parent, :default_strategy, :aliases, :uniq_record]
       unless invalid_keys == []
         raise ArgumentError, "Unknown arguments: #{invalid_keys.inspect}"
       end
@@ -206,3 +216,4 @@ module FactoryGirl
 
   end
 end
+
